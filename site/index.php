@@ -118,6 +118,24 @@ $version = $windows ?? $linux ?? '';
 
     .download:hover { background: #26323f; }
 
+    .live {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1.25rem 0 0;
+        color: var(--muted);
+    }
+
+    .live::before {
+        content: "";
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 50%;
+        background: var(--peer);
+    }
+
+    .live.idle::before { background: var(--rule); }
+
     .field {
         position: relative;
         height: 30rem;
@@ -281,6 +299,7 @@ $version = $windows ?? $linux ?? '';
                 <a class="download" href="releases/versions.php?os=linux">Download for Linux<small>Companion <?= htmlspecialchars($linux) ?></small></a>
                 <?php endif; ?>
             </div>
+            <p class="live" id="live" hidden></p>
         </div>
 
         <div class="field" role="img" aria-label="A Quaver editor playfield where two people, Adri and A6sT, are placing notes at the same time. Each has a cursor bookmark in their own colour.">
@@ -349,5 +368,27 @@ $version = $windows ?? $linux ?? '';
         <p>It's free software under the GNU AGPL v3 or later. <a href="https://github.com/Adrriii/MapTogether">Source code on GitHub</a>.</p>
     </footer>
 </main>
+<script>
+    const live = document.getElementById('live');
+    const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+    const refresh = () => {
+        const ws = new WebSocket('wss://qmtg.rhythmgamers.net');
+        ws.onopen = () => ws.send(JSON.stringify({ type: 'STATS' }));
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            if (msg.type !== 'STATS') return;
+            ws.close();
+            live.textContent = msg.sessions
+                ? `${plural(msg.sessions, 'session')} live right now, ${plural(msg.players, 'player')} mapping`
+                : 'No session live right now';
+            live.classList.toggle('idle', !msg.sessions);
+            live.hidden = false;
+        };
+    };
+
+    refresh();
+    setInterval(refresh, 30000);
+</script>
 </body>
 </html>
