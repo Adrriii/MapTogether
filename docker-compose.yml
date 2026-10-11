@@ -1,0 +1,8 @@
+services:
+  server:
+    build: .
+    restart: unless-stopped
+    environment:
+      PORT: "7777"
+    ports:
+      - "${MT_PORT:-24981}:7777"

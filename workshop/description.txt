@@ -1,0 +1,33 @@
+Edit a Quaver map with friends, live. The notes, timing points and SVs you place show up in their editor, and theirs in yours.
+
+Keep a backup of any map you care about and save often.
+
+[h2]Set it up[/h2]
+[olist]
+[*][b]Subscribe[/b] to this plugin.
+[*][b]Run the companion.[/b] The plugin talks to the other editors through a small companion app. Download it from [url=https://qmtg.rhythmgamers.net]qmtg.rhythmgamers.net[/url] (Windows and Linux), run it, and keep it open while you map. It opens a window in your browser with the connection status and the open lobbies, and keeps itself and this plugin up to date.
+[*][b]Open the plugin[/b] in the editor from Plugins › Steam Workshop › MapTogether. The window shows whether the companion is connected.
+[*][b]Host or join.[/b] To host, choose "Host this map" and save with Ctrl + S when the plugin asks, so it can identify the map. To join, pick a session from the list. The host accepts you, and if your copy of the map differs you can take theirs.
+[/olist]
+
+[h2]What's shared[/h2]
+[list]
+[*]Notes, long notes and mines, with their hitsounds, layer and timing group
+[*]Moving, flipping, swapping lanes, resnapping and reversing notes
+[*]Timing points, SVs and scroll speed factors
+[*]Bookmarks, timing groups and layer settings
+[*]Undo and redo, and edits made by other plugins
+[*]Everyone's cursor, shown as a bookmark in their colour
+[/list]
+
+[h2]Known limits[/h2]
+[list]
+[*]Edits from other people don't mark your map as unsaved. Make a change of your own before saving, or Quaver won't write the file.
+[*]Creating, deleting and reordering layers isn't shared yet. The plugin warns you when one of your edits wasn't sent.
+[*]Keep the plugin window open while you map. Edits made while it's closed are merged when you reopen it, and the host's version wins where you both changed the same second of the song.
+[*]Everyone needs the same companion version. The plugin tells you when yours is out of date.
+[*]macOS isn't supported. The companion runs on Windows and Linux.
+[/list]
+
+[h2]Open source[/h2]
+MapTogether is free software under the GNU AGPL v3 or later. The source code is on [url=https://github.com/Adrriii/MapTogether]GitHub[/url].

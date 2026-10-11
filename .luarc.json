@@ -1,0 +1,12 @@
+{
+  "diagnostics": {
+    "globals": [
+      "imgui", "imgui_col", "imgui_style_var",
+      "state", "map", "utils", "Perform",
+      "IPC", "Sync", "CFG", "Network", "Marker", "Companion",
+      "addMarker", "clearMTBookmarks", "updatePeerBookmarks",
+      "draw"
+    ],
+    "disable": ["lowercase-global"]
+  }
+}

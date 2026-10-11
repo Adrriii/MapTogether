@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MapTogether companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
+<style>
+	:root {
+		--page: #e9edf2;
+		--panel: #f6f8fa;
+		--ink: #17202b;
+		--muted: #556070;
+		--rule: #c9d1db;
+		--ok: #1f8a4c;
+		--wait: #b7791f;
+		--bad: #c53030;
+		--you: #f26666;
+		--focus: #4c8dff;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--page: #151a21;
+			--panel: #1d242d;
+			--ink: #e6ebf1;
+			--muted: #9aa6b5;
+			--rule: #2e3844;
+			--ok: #4cc27f;
+			--wait: #e0a84a;
+			--bad: #f07070;
+		}
+	}
+
+	* { box-sizing: border-box; }
+
+	[hidden] { display: none !important; }
+
+	body {
+		margin: 0;
+		background: var(--page);
+		color: var(--ink);
+		font: 400 1rem/1.55 "Atkinson Hyperlegible", system-ui, sans-serif;
+	}
+
+	main {
+		max-width: 46rem;
+		margin: 0 auto;
+		padding: 2rem 1.25rem 3rem;
+	}
+
+	header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	h1, h2 {
+		font-family: "Chakra Petch", system-ui, sans-serif;
+		margin: 0;
+		line-height: 1.15;
+	}
+
+	h1 { font-size: 2.2rem; letter-spacing: -0.01em; }
+	h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+
+	.version { color: var(--muted); }
+
+	section { margin-top: 2.25rem; }
+
+	.status {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border: 1px solid var(--rule);
+		border-radius: 0.5rem;
+		background: var(--panel);
+	}
+
+	.status li {
+		display: grid;
+		grid-template-columns: 0.75rem 8rem 1fr;
+		gap: 0.75rem;
+		align-items: baseline;
+		padding: 0.8rem 1rem;
+	}
+
+	.status li + li { border-top: 1px solid var(--rule); }
+
+	.dot {
+		width: 0.65rem;
+		height: 0.65rem;
+		border-radius: 50%;
+		background: var(--muted);
+		align-self: center;
+	}
+
+	.dot.ok { background: var(--ok); }
+	.dot.wait { background: var(--wait); }
+	.dot.bad { background: var(--bad); }
+
+	.label { font-weight: 700; }
+	.detail { color: var(--muted); }
+
+	.notice {
+		margin: 1rem 0 0;
+		padding: 0.75rem 1rem;
+		border-left: 3px solid var(--bad);
+		background: var(--panel);
+	}
+
+	.lobbies {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.lobby {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 0.75rem 0;
+		border-top: 1px solid var(--rule);
+	}
+
+	.lobby:last-child { border-bottom: 1px solid var(--rule); }
+	.lobby .info { flex: 1; min-width: 0; }
+	.lobby .map { font-weight: 700; overflow-wrap: anywhere; }
+	.lobby .meta { color: var(--muted); font-size: 0.92rem; }
+
+	.empty { color: var(--muted); }
+
+	button {
+		font: inherit;
+		font-weight: 700;
+		padding: 0.45rem 1rem;
+		border: 0;
+		border-radius: 0.35rem;
+		background: var(--ink);
+		color: var(--page);
+		cursor: pointer;
+	}
+
+	button.secondary {
+		background: transparent;
+		color: var(--ink);
+		box-shadow: inset 0 0 0 1px var(--rule);
+	}
+
+	button:disabled { opacity: 0.45; cursor: not-allowed; }
+	button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+	.setting {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.setting .path {
+		flex: 1;
+		min-width: 12rem;
+		overflow-wrap: anywhere;
+		color: var(--muted);
+	}
+
+	.setting + .setting { margin-top: 1rem; }
+
+	.toast {
+		min-height: 1.5rem;
+		margin-top: 1rem;
+		color: var(--bad);
+		white-space: pre-line;
+	}
+
+	.toast.ok { color: var(--ink); }
+
+	.overwrite {
+		margin-top: 1.5rem;
+		padding: 0.75rem 1rem;
+		border-left: 3px solid var(--wait);
+		background: var(--panel);
+	}
+
+	footer {
+		margin-top: 2.5rem;
+		color: var(--muted);
+		font-size: 0.92rem;
+	}
+
+	@media (max-width: 34rem) {
+		.status li { grid-template-columns: 0.75rem 1fr; }
+		.status .detail { grid-column: 2; }
+	}
+</style>
+</head>
+<body>
+<main>
+	<header>
+		<h1>MapTogether</h1>
+		<span class="version" id="version"></span>
+	</header>
+
+	<section aria-labelledby="status-title">
+		<h2 id="status-title">Status</h2>
+		<ul class="status">
+			<li><span class="dot" id="plugin-dot"></span><span class="label">Quaver plugin</span><span class="detail" id="plugin"></span></li>
+			<li><span class="dot" id="server-dot"></span><span class="label">Server</span><span class="detail" id="server"></span></li>
+			<li><span class="dot" id="session-dot"></span><span class="label">Session</span><span class="detail" id="session"></span></li>
+		</ul>
+		<p class="notice" id="notice" hidden></p>
+	</section>
+
+	<section aria-labelledby="lobbies-title">
+		<h2 id="lobbies-title">Lobbies</h2>
+		<ul class="lobbies" id="lobbies"></ul>
+		<p class="empty" id="lobbies-empty" hidden>No public lobbies right now. Host your map from the plugin in Quaver and it will show up here for others.</p>
+	</section>
+
+	<section aria-labelledby="settings-title">
+		<h2 id="settings-title">Settings</h2>
+		<div class="setting">
+			<span class="label">Songs folder</span>
+			<span class="path" id="songs"></span>
+			<button type="button" id="change-songs">Change folder</button>
+		</div>
+		<div class="setting">
+			<span class="label">Updates</span>
+			<span class="path">Updates the companion and the plugin to the latest release.</span>
+			<button type="button" id="update">Check for updates</button>
+		</div>
+	</section>
+
+	<p class="setting overwrite" id="overwrite" hidden>
+		<span class="path" id="overwrite-text"></span>
+		<button type="button" id="overwrite-yes">Overwrite</button>
+		<button type="button" class="secondary" id="overwrite-no">Keep mine</button>
+	</p>
+
+	<p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+	<footer>
+		<p>Keep the companion running while you map. Closing its console window stops it.</p>
+		<p>MapTogether is free software under the GNU AGPL v3 or later. <a href="https://github.com/Adrriii/MapTogether" target="_blank" rel="noopener">Source code</a>.</p>
+	</footer>
+</main>
+
+<script>
+	const TOKEN = '__TOKEN__';
+	const $ = (id) => document.getElementById(id);
+	let current = null;
+	let lastDownload = '';
+	let restarting = null;
+	let restartedAt = 0;
+
+	const api = async (path, options = {}) => {
+		const res = await fetch(path, { ...options, headers: { 'x-token': TOKEN, 'content-type': 'application/json' } });
+		const body = await res.json().catch(() => ({}));
+		if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
+		return body;
+	};
+
+	const toast = (message, ok = false, keep = false) => {
+		$('toast').textContent = message;
+		$('toast').className = ok ? 'toast ok' : 'toast';
+		if (message && !keep) setTimeout(() => { if ($('toast').textContent === message) $('toast').textContent = ''; }, 6000);
+	};
+
+	const setStatus = (id, tone, text) => {
+		$(`${id}-dot`).className = `dot ${tone}`;
+		$(id).textContent = text;
+	};
+
+	const describeSession = (s, pluginConnected) => {
+		if (s.state === 'SCANNING') return ['wait', 'Save your map in Quaver (Ctrl+S) so MapTogether can identify it.'];
+		if (s.state === 'SYNCED') {
+			const others = s.peers.map((p) => p.name).join(', ');
+			const role = s.role === 'host' ? 'Hosting' : 'Joined';
+			const map = s.map ? ` ${s.map}` : '';
+			return ['ok', `${role}${map}${others ? ` with ${others}` : ', nobody else yet'}.`];
+		}
+		if (s.id) return ['wait', 'Waiting for the host to accept you.'];
+		return ['', pluginConnected ? 'Not in a session. Host from the plugin, or join a lobby below.' : 'Not in a session.'];
+	};
+
+	const renderLobbies = (state) => {
+		const list = $('lobbies');
+		list.replaceChildren();
+		$('lobbies-empty').hidden = state.lobbies.length > 0;
+		const canJoin = state.plugin.connected && state.session.state === 'IDLE' && !state.session.id;
+		for (const lobby of state.lobbies) {
+			const item = document.createElement('li');
+			item.className = 'lobby';
+			const info = document.createElement('div');
+			info.className = 'info';
+			const map = document.createElement('div');
+			map.className = 'map';
+			map.textContent = lobby.map ?? 'Unidentified map';
+			const meta = document.createElement('div');
+			meta.className = 'meta';
+			const details = [`Hosted by ${lobby.host}`, `${lobby.players}/${lobby.maxPlayers} players`];
+			if (lobby.mode) details.push(lobby.mode.replace('Keys', '') + 'K');
+			if (lobby.notes !== null) details.push(`${lobby.notes} notes`);
+			meta.textContent = details.join(', ');
+			info.append(map, meta);
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.textContent = 'Join';
+			button.disabled = !canJoin || lobby.players >= lobby.maxPlayers;
+			button.title = canJoin ? '' : 'Open the plugin in Quaver and leave your current session to join.';
+			button.addEventListener('click', async () => {
+				button.disabled = true;
+				try {
+					await api('/api/join', { method: 'POST', body: JSON.stringify({ sessionId: lobby.id }) });
+					toast('Joining: save your map in Quaver (Ctrl+S) when the plugin asks.');
+				} catch (e) {
+					toast(e.message);
+				}
+			});
+			item.append(info);
+			if (lobby.sharing) {
+				const get = document.createElement('button');
+				get.type = 'button';
+				get.className = 'secondary';
+				get.textContent = 'Download map';
+				get.disabled = state.download?.status === 'waiting';
+				get.addEventListener('click', async () => {
+					get.disabled = true;
+					try {
+						await api('/api/download', { method: 'POST', body: JSON.stringify({ sessionId: lobby.id }) });
+					} catch (e) {
+						toast(e.message);
+					}
+				});
+				item.append(get);
+			}
+			item.append(button);
+			list.append(item);
+		}
+	};
+
+	const render = (state) => {
+		current = state;
+		$('version').textContent = `companion ${state.version}, playing as ${state.username}`;
+		setStatus('plugin', state.plugin.connected ? 'ok' : 'bad', state.plugin.connected
+			? `Connected${state.plugin.version ? ` (plugin ${state.plugin.version})` : ''}.`
+			: 'Not connected. Open a map in Quaver’s editor and enable Plugins › Steam Workshop › MapTogether.');
+		setStatus('server', state.server.connected ? 'ok' : 'wait', state.server.connected ? 'Connected.' : 'Connecting…');
+		const [tone, text] = describeSession(state.session, state.plugin.connected);
+		setStatus('session', tone, text);
+		$('notice').hidden = !state.notice;
+		$('notice').textContent = state.notice ?? '';
+		$('songs').textContent = state.songsDir ?? 'Not set';
+		renderLobbies(state);
+		renderDownload(state.download);
+	};
+
+	const renderDownload = (download) => {
+		const key = download ? `${download.status}:${download.message}` : '';
+		if (key === lastDownload) return;
+		lastDownload = key;
+		const asking = download?.status === 'exists';
+		$('overwrite').hidden = !asking;
+		$('overwrite-text').textContent = asking ? download.message : '';
+		if (download && !asking) toast(download.message, download.status !== 'failed', download.status !== 'failed');
+	};
+
+	$('overwrite-yes').addEventListener('click', async () => {
+		try {
+			await api('/api/download/overwrite', { method: 'POST' });
+			await poll();
+		} catch (e) {
+			toast(e.message);
+		}
+	});
+
+	$('overwrite-no').addEventListener('click', () => {
+		$('overwrite').hidden = true;
+	});
+
+	const poll = async () => {
+		try {
+			const state = await api('/api/state');
+			if (restarting && state.version !== restarting) {
+				restarting = null;
+				$('update').disabled = false;
+				toast(`The companion is now ${state.version}. The plugin updates on its own once Quaver has it open.`, true, true);
+			}
+			render(state);
+		} catch {
+			if (restarting && Date.now() - restartedAt < 60000) {
+				setStatus('plugin', 'wait', 'Restarting the companion…');
+				return;
+			}
+			setStatus('plugin', 'bad', 'The companion stopped. Start it again to reconnect.');
+			setStatus('server', 'bad', '');
+			setStatus('session', 'bad', '');
+		}
+	};
+
+	$('change-songs').addEventListener('click', async () => {
+		$('change-songs').disabled = true;
+		try {
+			await api('/api/songs-dir', { method: 'POST' });
+			toast('');
+			await poll();
+		} catch (e) {
+			toast(e.message);
+		} finally {
+			$('change-songs').disabled = false;
+		}
+	});
+
+	$('update').addEventListener('click', async () => {
+		$('update').disabled = true;
+		toast('Checking for updates…', true, true);
+		try {
+			const report = await api('/api/update', { method: 'POST' });
+			if (report.restarting) {
+				restarting = current?.version ?? '';
+				restartedAt = Date.now();
+			}
+			toast([report.companion, report.plugin].filter(Boolean).join('\n'), true, true);
+		} catch (e) {
+			toast(e.message);
+		} finally {
+			if (!restarting) $('update').disabled = false;
+		}
+	});
+
+	poll();
+	setInterval(poll, 1000);
+</script>
+</body>
+</html>

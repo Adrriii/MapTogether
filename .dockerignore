@@ -1,0 +1,12 @@
+node_modules
+config.yaml
+plugin.lua
+.claude
+.git
+src/companion
+src/plugin
+src/quaver_ipc
+watch.js
+build.js
+settings.ini
+.env

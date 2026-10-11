@@ -1,0 +1,9 @@
+dist/
+node_modules/
+plugin.lua
+config.yaml
+companion.json
+companion.lock
+.claude/
+.vscode/
+.env

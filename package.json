@@ -1,0 +1,38 @@
+{
+  "name": "maptogether-companion",
+  "version": "1.0.0",
+  "license": "AGPL-3.0-or-later",
+  "main": "src/companion/main.ts",
+  "dependencies": {
+    "@clack/prompts": "^1.2.0",
+    "arktype": "^2.2.0",
+    "js-yaml": "^4.1.1",
+    "ws": "^8.20.0"
+  },
+  "description": "MapTogether test companion app for the Quaver plugin",
+  "scripts": {
+    "build": "bun build.ts",
+    "dist": "bun dist.ts",
+    "start": "bun build.ts && bun src/companion/main.ts",
+    "server": "bun src/server/main.ts",
+    "dev": "bun build.ts && bun --watch src/companion/main.ts",
+    "watch": "bun watch.ts",
+    "typecheck": "tsc",
+    "lint": "eslint src",
+    "deploy": "bun deploy.ts",
+    "test": "bun test && bun test/run-lua.mjs src/plugin/perform.lua test/perform.test.lua"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/ws": "^8.18.1",
+    "bun-types": "^1.3.13",
+    "eslint": "^10.2.1",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "eslint-plugin-sonarjs": "^4.0.3",
+    "fengari": "0.1.4",
+    "jiti": "^2.6.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0"
+  }
+}
