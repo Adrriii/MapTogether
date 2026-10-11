@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src=".github/assets/demo.svg" alt="MapTogether: two Quaver editors side by side. Notes placed in one appear in the other half a second later, with each person's cursor shown in the other editor" width="100%">
+<a href="https://qmtg.rhythmgamers.net"><img src=".github/assets/demo.svg" alt="MapTogether: two Quaver editors side by side. Notes placed in one appear in the other half a second later, with each person's cursor shown in the other editor" width="100%"></a>
 
 The notes, timing points and SVs you place show up in their editor, and theirs in yours.
 
