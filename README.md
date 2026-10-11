@@ -179,7 +179,7 @@ bun run lint
 <br>
 
 ```bash
-docker compose up -d
+docker compose -f docker/docker-compose.yml up -d
 ```
 
 The server listens on port 7777 in the container, published on `MT_PORT` (default 24981). If you change the server code, the AGPL asks you to offer its source to the people who use it.

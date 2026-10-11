@@ -10,7 +10,7 @@ const DRAW_MS = 16;
 const PLUGIN_BUNDLE = path.join(os.tmpdir(), `mtg-e2e-plugin-${process.pid}.lua`);
 
 export const buildPlugin = (): void => {
-	spawnSync('bun', ['build.ts', PLUGIN_BUNDLE], {
+	spawnSync('bun', ['scripts/build.ts', PLUGIN_BUNDLE], {
 		cwd: ROOT,
 		stdio: 'ignore',
 	});

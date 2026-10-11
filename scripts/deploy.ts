@@ -5,7 +5,7 @@
 //   linux    builds the Linux companion on the server host from the deployed commit
 //   site     uploads the landing page from site/
 //
-// Usage: bun deploy.ts [release] [server] [linux] [site]   (no argument: all)
+// Usage: bun scripts/deploy.ts [release] [server] [linux] [site]   (no argument: all)
 // Needs MT_DEPLOY_HOST, MT_DEPLOY_SITE_PATH and MT_DEPLOY_SERVER_PATH, for example in a .env file.
 
 import { $ } from 'bun';
@@ -61,12 +61,12 @@ const deployServer = async (): Promise<boolean> => {
 	const localHead = (await $`git rev-parse origin/master`.nothrow().text()).trim();
 	console.log(`Updating the server at ${REMOTE_HOST}:${SERVER_PATH} to ${localHead.slice(0, 7)}`);
 
-	const serverFiles = 'src/server src/shared Dockerfile docker-compose.yml bun.lock tsconfig.json';
+	const serverFiles = 'src/server src/shared docker bun.lock tsconfig.json';
 	const script = [
 		`cd ${SERVER_PATH}`,
 		'before=$(git rev-parse HEAD)',
 		'git pull --ff-only',
-		`if git diff --quiet "$before" HEAD -- ${serverFiles}; then echo "Server code unchanged, keeping the running container."; docker compose up -d; else docker compose up -d --build; fi`,
+		`if git diff --quiet "$before" HEAD -- ${serverFiles}; then echo "Server code unchanged, keeping the running container."; docker compose -f docker/docker-compose.yml up -d; else docker compose -f docker/docker-compose.yml up -d --build; fi`,
 	].join(' && ');
 	const updated = await run($`ssh ${REMOTE_HOST} ${script}`);
 	if (!updated) return false;
@@ -93,7 +93,7 @@ const deployLinux = async (): Promise<boolean> => {
 	const out = `${RELEASES_PATH}/linux/v${version}`;
 	console.log(`Building the Linux companion v${version} on ${REMOTE_HOST}`);
 
-	const build = 'bun install --frozen-lockfile --production > /dev/null && bun build.ts > /dev/null && bun build --compile --target=bun-linux-x64 --outfile=/out/maptogether-companion src/companion/main.ts';
+	const build = 'bun install --frozen-lockfile --production > /dev/null && bun scripts/build.ts > /dev/null && bun build --compile --target=bun-linux-x64 --outfile=/out/maptogether-companion src/companion/main.ts';
 	const script = [
 		`mkdir -p ${out}`,
 		`git -C ${SERVER_PATH} archive HEAD | docker run --rm -i --user "$(id -u):$(id -g)" -e HOME=/tmp -v ${out}:/out oven/bun:1 sh -c 'mkdir /tmp/app && cd /tmp/app && tar -x && ${build}'`,

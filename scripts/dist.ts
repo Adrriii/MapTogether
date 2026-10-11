@@ -4,7 +4,7 @@
 //   dist/MapTogether/                plugin.lua, settings.ini and the workshop/ files, mirrored to ../MapTogether for publishing
 //   dist/companion/<platform>/<ver>/ per-platform executables
 //
-// Usage: bun dist.ts  (or: bun run dist)
+// Usage: bun scripts/dist.ts  (or: bun run dist)
 
 import { execSync } from 'child_process';
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
@@ -12,7 +12,7 @@ import { dirname, join } from 'path';
 import { createInterface } from 'readline/promises';
 import { fileURLToPath } from 'url';
 
-const ROOT = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
 const PUBLISH_DIR = join(ROOT, '..', 'MapTogether');
 const WORKSHOP_DIR = join(ROOT, 'workshop');
@@ -112,7 +112,7 @@ const bumpVersion = async (): Promise<BumpResult> => {
 
 const buildPlugin = (): void => {
 	console.log('\nBuilding Lua plugin...');
-	run('bun build.ts');
+	run('bun scripts/build.ts');
 
 	const dir = join(DIST, 'MapTogether');
 	mkdirSync(dir, { recursive: true });
@@ -190,7 +190,7 @@ for (const [platform, config] of Object.entries(TARGETS)) {
 
 const companionDir = join(DIST, 'companion');
 mkdirSync(companionDir, { recursive: true });
-copyFileSync(join(ROOT, 'versions.php'), join(companionDir, 'versions.php'));
+copyFileSync(join(ROOT, 'site', 'versions.php'), join(companionDir, 'versions.php'));
 console.log(`  -> dist/companion/versions.php`);
 
 if (bumped) commitAndPush(tag);

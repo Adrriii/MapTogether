@@ -4,14 +4,14 @@
 // Lua sources  → rebuild plugin.lua
 // TS sources   → bun --watch handles companion restarts automatically
 //
-// Usage: bun watch.ts   (or: bun run watch)
+// Usage: bun scripts/watch.ts   (or: bun run watch)
 
 import { type ChildProcess, spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -31,8 +31,8 @@ const log = (msg: string): void => {
 
 const rebuild = (): void => {
 	try {
-		const result = Bun.spawnSync(['bun', 'build.ts'], {
-			cwd: __dirname,
+		const result = Bun.spawnSync(['bun', 'scripts/build.ts'], {
+			cwd: ROOT,
 			stdio: ['inherit', 'inherit', 'inherit'],
 		});
 		if (result.exitCode !== 0) log('Build failed.');
@@ -47,7 +47,7 @@ let proc: ChildProcess | null = null;
 
 const spawnCompanion = (): void => {
 	proc = spawn('bun', ['--watch', 'src/companion/main.ts'], {
-		cwd: __dirname,
+		cwd: ROOT,
 		stdio: ['ignore', 'inherit', 'inherit'],
 	});
 	proc.on('exit', (code, signal) => {
@@ -72,11 +72,11 @@ const onLuaChange = debounce(() => {
 	rebuild();
 }, 200);
 
-const luaSources = fs.readdirSync(path.join(__dirname, 'src'), { recursive: true })
+const luaSources = fs.readdirSync(path.join(ROOT, 'src'), { recursive: true })
 	.map(f => path.join('src', f as string))
 	.filter(f => f.endsWith('.lua'));
 
-for (const file of luaSources) fs.watch(path.join(__dirname, file), onLuaChange);
+for (const file of luaSources) fs.watch(path.join(ROOT, file), onLuaChange);
 
 // ── Shutdown ──────────────────────────────────────────────────────────────────
 
