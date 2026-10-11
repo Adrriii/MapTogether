@@ -149,7 +149,8 @@ const buildCompanion = (tag: string, platform: string, { bunTarget, outputName }
 
 	mkdirSync(outDir, { recursive: true });
 
-	run(`bun build --compile --target=${bunTarget} --outfile="${exePath}" src/companion/main.ts`);
+	const icon = platform === 'windows' ? ' --windows-icon=src/companion/icon.ico' : '';
+	run(`bun build --compile --target=${bunTarget}${icon} --outfile="${exePath}" src/companion/main.ts`);
 
 	console.log(`  -> dist/companion/${platform}/${tag}/${outputName}`);
 }
