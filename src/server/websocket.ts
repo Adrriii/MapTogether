@@ -10,7 +10,7 @@ import { COMPANION_MESSAGE, CompanionMessage } from '@mtg-shared/companion_messa
 import {
 	handleAbort,
 	handleAccept, handleAction, handleAdopt, 	handleCheck, handleCreate, handleCursor, handleDebug, handleDescriptor, handleHello, handleJoin,
-	handleKick, handleResync, handleSnapshot,
+	handleKick, handleResync, handleSnapshot, handleStats,
 } from '@mtg-server/handle_companion_message';
 import { handleMapset, handleMapsetRequest, handleSharing } from '@mtg-server/handle_mapset';
 import { handleResume } from '@mtg-server/resume';
@@ -81,6 +81,7 @@ export const onConnect = (ws: WebSocket): void => {
 			case COMPANION_MESSAGE.MAPSET_REQUEST: handleMapsetRequest(client, msg); break;
 			case COMPANION_MESSAGE.MAPSET:     handleMapset(client, msg); break;
 			case COMPANION_MESSAGE.RESUME:     handleResume(client, msg); break;
+			case COMPANION_MESSAGE.STATS:      handleStats(client); break;
 		}
 	});
 

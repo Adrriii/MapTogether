@@ -2,7 +2,7 @@ import { expect, test } from 'bun:test';
 import { WebSocket } from 'ws';
 
 import {
-	handleAbort, handleAccept, handleAction, handleAdopt, handleCreate, handleJoin, handleResync, handleSnapshot,
+	handleAbort, handleAccept, handleAction, handleAdopt, handleCreate, handleJoin, handleResync, handleSnapshot, handleStats,
 } from '@mtg-server/handle_companion_message';
 import { removeFromSession } from '@mtg-server/session';
 import { clients, sessions } from '@mtg-server/store';
@@ -96,5 +96,20 @@ test('a session closed by its last player leaving disappears from the lobby list
 
 	expect(lobby.sent.at(-1)).toMatchObject({ type: 'SESSION_LIST', sessions: [] });
 	expect(host.sent.at(-1)).toMatchObject({ type: 'SESSION_LIST', sessions: [] });
+	sessions.clear();
+});
+
+test('stats count every live session and its players, private ones included', () => {
+	const host = makeClient('host');
+	const peer = makeClient('peer');
+	const solo = makeClient('solo');
+	const visitor = makeClient('visitor');
+	handleCreate(host, { type: 'CREATE' });
+	join(host, peer);
+	handleCreate(solo, { type: 'CREATE', private: true });
+
+	handleStats(visitor);
+
+	expect(visitor.sent.at(-1)).toEqual({ type: 'STATS', sessions: 2, players: 3 });
 	sessions.clear();
 });

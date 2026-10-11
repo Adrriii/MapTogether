@@ -344,3 +344,12 @@ export const handleDebug = (client: Client, msg: CompanionMessage): void => {
 	}
 	clack.log.info(`${client.username} | DEBUG | ${msg.message}`);
 }
+export const handleStats = (client: Client): void => {
+	let players = 0;
+	for (const session of sessions.values()) players += session.clients.size;
+	send(client.ws, {
+		type: SERVER_MESSAGE.STATS,
+		sessions: sessions.size,
+		players,
+	});
+}

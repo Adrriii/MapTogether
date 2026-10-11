@@ -28,6 +28,7 @@ export const SERVER_MESSAGE = {
 	MAPSET: 'MAPSET',
 	SESSION_RESUMED: 'SESSION_RESUMED',
 	RESUME_FAILED: 'RESUME_FAILED',
+	STATS: 'STATS',
 } as const;
 export type ServerMessageType = typeof SERVER_MESSAGE[keyof typeof SERVER_MESSAGE];
 
@@ -132,6 +133,11 @@ export const ServerMessage = type(
 	.or({
 		type: `'${SERVER_MESSAGE.RESUME_FAILED}'`,
 		message: 'string',
+	})
+	.or({
+		type: `'${SERVER_MESSAGE.STATS}'`,
+		sessions: 'number',
+		players: 'number',
 	})
 ;
 export type ServerMessage = typeof ServerMessage.infer;

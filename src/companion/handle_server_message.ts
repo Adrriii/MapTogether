@@ -164,6 +164,8 @@ const handleServerMessage = (msg: ServerMessage): void => {
 		case SERVER_MESSAGE.RESUME_FAILED:
 			onResumeFailed(msg);
 			break;
+		case SERVER_MESSAGE.STATS:
+			break;
 		case SERVER_MESSAGE.ERROR:
 			clack.log.warn(`Server: ${msg.message}`);
 			IPC.send({

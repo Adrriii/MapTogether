@@ -23,6 +23,7 @@ export const COMPANION_MESSAGE = {
 	MAPSET_REQUEST: 'MAPSET_REQUEST',
 	MAPSET: 'MAPSET',
 	RESUME: 'RESUME',
+	STATS: 'STATS',
 } as const;
 export type CompanionMessageType = typeof COMPANION_MESSAGE[keyof typeof COMPANION_MESSAGE];
 
@@ -103,6 +104,7 @@ export const CompanionMessage = type(
 		seq: 'number',
 		'private?': 'boolean',
 	})
+	.or({ type: `'${COMPANION_MESSAGE.STATS}'` })
 ;
 export type CompanionMessage = typeof CompanionMessage.infer;
 export type CompanionMessageOfType<T extends CompanionMessageType> = Extract<CompanionMessage, { type: T }>;
