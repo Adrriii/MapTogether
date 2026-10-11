@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="workshop/steam_workshop_preview.png" alt="MapTogether: edit maps together, live" width="720">
-
-### Real-time collaborative mapping for Quaver
+<img src=".github/assets/demo.svg" alt="MapTogether: two Quaver editors side by side. Notes placed in one appear in the other half a second later, with each person's cursor shown in the other editor" width="100%">
 
 The notes, timing points and SVs you place show up in their editor, and theirs in yours.
 
@@ -21,10 +19,6 @@ The notes, timing points and SVs you place show up in their editor, and theirs i
 <img src="https://img.shields.io/badge/Bun-14151a?style=flat-square&logo=bun&logoColor=white" alt="Bun">
 <img src="https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">
 <img src="https://img.shields.io/badge/Lua-2c2d72?style=flat-square&logo=lua&logoColor=white" alt="Lua">
-
-<br><br>
-
-<img src=".github/assets/demo.svg" alt="Two Quaver editors side by side: notes placed in one appear in the other half a second later, with each person's cursor shown in the other editor" width="100%">
 
 </div>
 
